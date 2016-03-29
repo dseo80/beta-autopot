@@ -1,0 +1,500 @@
+            Else If (InStr(FlasksData[A_Index].mod2,"Saturated"))
+            FlasksData[A_Index].EffectDuration:=(ReadMemUInt(pH,FlaskLocalstatsPtr+0x14)/2.35)
+            Else If (InStr(FlasksData[A_Index].mod1,"Catalysed"))
+            FlasksData[A_Index].EffectDuration:=(ReadMemUInt(pH,FlaskLocalstatsPtr+0x14)/1.5)
+            Else If (InStr(FlasksData[A_Index].mod2,"Catalysed"))
+            FlasksData[A_Index].EffectDuration:=(ReadMemUInt(pH,FlaskLocalstatsPtr+0x14)/1.5)
+            Else
+            FlasksData[A_Index].EffectDuration:=ReadMemUInt(pH,FlaskLocalstatsPtr+0x14)
+         }
+
+         If InStr(FlaskTypeStr, "FlaskUtility")
+         {
+            FlasksData[A_Index].EffectDuration:=ReadMemUInt(pH,FlaskLocalstatsPtr+0x14)
+         }
+      }
+   }
+}
+
+IsInGame(hwnd)
+{
+   global Offset3
+
+   If (hwnd=0 || hwnd="")
+      return false
+   GetWindowBasics(hwnd,mBase,pH)
+   If (mBase="" || mBase=0 || pH="" || pH=-1)
+      return false
+   fBase:=GetFrameBase(hwnd)
+   If (fBase="" || fBase=0)
+      return false
+   localConnection:=ReadMemUInt(pH,fBase+Offset3)
+   If (localConnection=0 || localConnection="")
+      return false
+   Else
+      return true
+}
+
+SetGameStateMenu(hwnd)
+{
+   global Offset3
+   global Offset5
+
+   If (hwnd=0 || hwnd="")
+      return false
+   GetWindowBasics(hwnd,mBase,pH)
+   If (mBase="" || mBase=0 || pH="" || pH=-1)
+      return false
+   fBase:=GetFrameBase(hwnd)
+   If (fBase="" || fBase=0)
+      return false
+   localConnection:=ReadMemUInt(pH,fBase+Offset3)
+   If (localConnection!="" && localConnection!=0)
+   {
+      WriteMemUInt(pH,localConnection+Offset5,1)
+   }
+}
+
+ReadHeroPos(hwnd,ByRef x, ByRef y)
+{
+   global Offset1
+   global Offset2
+
+   GetWindowBasics(hwnd,mBase,pH)
+   If (mBase!=0 && pH && pH!=-1)
+   {
+      FrameBase:=GetFrameBase(hwnd)
+
+      PlayerPosBase:=GetMultilevelPointer(pH,[FrameBase+Offset1,Offset2,0x24])
+
+      x:=ReadMemFloat(pH,PlayerPosBase+0x2c)
+      y:=ReadMemFloat(pH,PlayerPosBase+0x30)
+
+      return true
+   }   
+}
+
+ScreenToClient(hwnd, ByRef x, ByRef y)
+{
+    VarSetCapacity(pt, 8)
+    NumPut(x, pt, 0)
+    NumPut(y, pt, 4)
+    DllCall("ScreenToClient", "uint", hwnd, "uint", &pt)
+    x := NumGet(pt, 0, "int")
+    y := NumGet(pt, 4, "int")
+   VarSetCapacity(pt, 0)
+}
+
+GetClientCoords(byRef mx, byRef my)
+{
+   hwnd:=WinActive("A")   
+   CoordMode, Mouse, Screen
+   MouseGetPos, mx, my
+   ScreenToClient(hwnd,mx,my) ;  x 580   y 435
+}
+
+
+GetMaxChargesFlaskOfType(ByRef FlasksData,TypeStr)
+{
+   currMaxCharges:=0
+   Loop, 5
+      If (InStr(FlasksData[A_Index].type,TypeStr))
+      {
+         If ((FlasksData[A_Index].ChargesCurrent>currMaxCharges) && (FlasksData[A_Index].ChargesCurrent>=FlasksData[A_Index].ChargesPerUse))
+         {
+            currMaxI:=A_Index
+            currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+         }
+      }
+   return currMaxI
+}
+
+GetMaxChargesFlaskOfMod(ByRef FlasksData,ModStr)
+{
+   currMaxCharges:=0
+   Loop, 5
+      If ((InStr(FlasksData[A_Index].mod1,ModStr)) || (InStr(FlasksData[A_Index].mod2,ModStr)))
+      {
+         If ((FlasksData[A_Index].ChargesCurrent>currMaxCharges) && (FlasksData[A_Index].ChargesCurrent>=FlasksData[A_Index].ChargesPerUse))
+         {
+            currMaxI:=A_Index
+            currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+         }
+      }
+   return currMaxI
+}
+
+GetMaxChargesFlaskQuickSilver(ByRef FlasksData,TypeStr)
+{
+   currMaxCharges:=0
+   Loop, 5
+      If (InStr(FlasksData[A_Index].type,TypeStr))
+      {
+         If FlasksData[A_Index].ChargesCurrent>=40
+         {
+            If FlasksData[A_Index].ChargesCurrent>currMaxCharges
+            {
+               currMaxI:=A_Index
+               currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+            }
+         }
+      }
+   return currMaxI
+}
+
+GetMaxChargesFlaskQuickSilver2(ByRef FlasksData,TypeStr)
+{
+   currMaxCharges:=0
+   Loop, 5
+      If (InStr(FlasksData[A_Index].type,TypeStr))
+      {
+         If FlasksData[A_Index].ChargesCurrent>=20
+         {
+            If FlasksData[A_Index].ChargesCurrent>currMaxCharges
+            {
+               currMaxI:=A_Index
+               currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+            }
+         }
+      }
+   return currMaxI
+}
+
+GetMaxChargesOfInstantFlask(ByRef FlasksData,TypeStr)
+{
+   global PanickedTimer
+   currMaxCharges:=0
+   Loop, 5
+      If (InStr(FlasksData[A_Index].type,TypeStr))
+      {
+         If (InStr(FlasksData[A_Index].mod1,"Seething"))
+         {
+            If FlasksData[A_Index].ChargesCurrent>currMaxCharges
+            {
+               currMaxI:=A_Index
+               currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+            }
+         }
+         Else If (InStr(FlasksData[A_Index].mod2,"Seething"))
+         {
+            If FlasksData[A_Index].ChargesCurrent>currMaxCharges
+            {
+               currMaxI:=A_Index
+               currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+            }
+         }
+         Else If (InStr(FlasksData[A_Index].mod1,"Bubbling"))
+         {
+            If FlasksData[A_Index].ChargesCurrent>currMaxCharges
+            {
+               currMaxI:=A_Index
+               currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+            }
+         }
+         Else If (InStr(FlasksData[A_Index].mod2,"Bubbling"))
+         {
+            If FlasksData[A_Index].ChargesCurrent>currMaxCharges
+            {
+               currMaxI:=A_Index
+               currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+            }
+         }
+         Else If ((InStr(FlasksData[A_Index].mod1,"Panicked")) And ((PlayerStats.CurrHP/PlayerStats.MaxHP)<=0.35)) ; "Low Life" can be caused by auras hp reservation from blood magic
+         {
+            If FlasksData[A_Index].ChargesCurrent>currMaxCharges
+            {
+               If (PanickedTimer>35)
+               {
+                  currMaxI:=A_Index
+                  currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+                  PanickedTimer:= 0
+               }
+            }
+         }
+         Else If ((InStr(FlasksData[A_Index].mod2,"Panicked")) And ((PlayerStats.CurrHP/PlayerStats.MaxHP)<=0.35)) ; "Low Life" can be caused by auras hp reservation from blood magic
+         {
+            If FlasksData[A_Index].ChargesCurrent>currMaxCharges
+            {
+               If (PanickedTimer>35)
+               {
+                  currMaxI:=A_Index
+                  currMaxCharges:=FlasksData[A_Index].ChargesCurrent
+                  PanickedTimer:= 0
+               }
+            }
+         }
+      }
+   return currMaxI
+}
+
+FileMD5( sFile="", cSz=4 )
+{  ; by SKAN www.autohotkey.com/community/viewtopic.php?t=64211
+	cSz := (cSz<0||cSz>8) ? 2**22 : 2**(18+cSz), VarSetCapacity( Buffer,cSz,0 ) ; 18-Jun-2009
+	hFil := DllCall( "CreateFile", Str,sFile,UInt,0x80000000, Int,3,Int,0,Int,3,Int,0,Int,0 )
+	IfLess,hFil,1, Return,hFil
+	hMod := DllCall( "LoadLibrary", Str,"advapi32.dll" )
+	DllCall( "GetFileSizeEx", UInt,hFil, UInt,&Buffer ),    fSz := NumGet( Buffer,0,"Int64" )
+	VarSetCapacity( MD5_CTX,104,0 ),    DllCall( "advapi32\MD5Init", UInt,&MD5_CTX )
+	Loop % ( fSz//cSz + !!Mod( fSz,cSz ) )
+	DllCall( "ReadFile", UInt,hFil, UInt,&Buffer, UInt,cSz, UIntP,bytesRead, UInt,0 )
+	, DllCall( "advapi32\MD5Update", UInt,&MD5_CTX, UInt,&Buffer, UInt,bytesRead )
+	DllCall( "advapi32\MD5Final", UInt,&MD5_CTX )
+	DllCall( "CloseHandle", UInt,hFil )
+	Loop % StrLen( Hex:="123456789ABCDEF0" )
+	N := NumGet( MD5_CTX,87+A_Index,"Char"), MD5 .= SubStr(Hex,N>>4,1) . SubStr(Hex,N&15,1)
+	Return MD5, DllCall( "FreeLibrary", UInt,hMod )
+}
+
+
+Main()
+{
+	global AutoFlaskWatchdogPeriod
+	global lagCompensation
+	global PlayerConfig
+	global WindowQueuedFlaskEffects
+	global cliname
+	global cliexe
+	global trayNotIfications
+	global autoQuitMode
+	global tradechat
+	global borderless
+	global ResyncTimer
+	global ResyncSpam
+   global RemainingTimer
+   global RemainingSpam
+	global tradechat
+	global TradeSpam
+	global TradeSpamTimer
+	global TradeTimer
+	global TradeChannel
+	global TradeStep
+	global PanickedTimer
+	global QuickSilverCheck
+	global QuickSilverCheck2
+	global AttackInPlaceCheck
+	global AttackInPlaceKeyUp
+	global ChatStatusTimer
+	global ChatCheckTimer
+	global MovementTimer
+	global 20secsTimer
+	global FLaskHotkey1
+	global FLaskHotkey2
+	global FLaskHotkey3
+	global FLaskHotkey4
+	global FLaskHotkey5
+	global LastHP
+	global LastES
+	global LastMaxHP
+	global LastMaxES
+	global AttackInPlaceKey
+	global FlaskOnFrozenCheck
+	global FlaskOnShockedCheck
+	global FlaskOnIgnitedCheck
+	global QuicksilverBuff
+   global FlaskOnCurseCheck
+   global FlaskOnCorruptedBloodCheck
+   global HoldCtrlCheck
+   global CtrlkeyDown
+   global AttackInPlaceKeyDown
+   global ConfigPath
+
+	WinGet, WinID, List, %cliname%
+
+	Loop, %WinID%
+	{
+      
+		WinGet, ProcModuleName, ProcessName,  % "ahk_id" WinID%A_Index%
+
+		If (ProcModuleName!="PathOfExile.exe") ; got a window with title "Path of Exile" but exe is not Client.exe, perhaps we have browser window open with PoE site, ignore it
+        {
+        	continue
+        }
+        
+			cliexe=PathOfExile.exe
+
+		If (WinID%A_Index%=WinActive("A"))
+		ThisID:=WinActive("A")
+
+      ;--------------Get keys Start---------------
+  
+      If (A_TickCount>=20secsTimer+20000)
+      {
+         ;Loop, 5
+
+         ;{
+            FileRead, ProductionConfig, %ConfigPath%
+            ;FileReadLine, ProductionConfig, %ConfigPath%, 
+
+            Loop, read, %ConfigPath%
+            {
+                Loop, parse, A_LoopReadLine, %A_Tab%
+                {
+                     testfield = %A_LoopField%
+                     testfield .= ""
+
+                     IfInString, testfield, attack_in_place
+                     {
+                        StringGetPos, StringPos, testfield, =
+                        vk := SubStr(testfield, StringPos+2)
+                        SetFormat, IntegerFast, hex
+                        vk += 0
+                        vk .= ""
+                        SetFormat, IntegerFast, d
+                        AttackInPlaceKey=vk%vk%
+                        continue
+                     }
+                     IfInString, testfield, use_flask_in_slot1
+                     {
+                        StringGetPos, StringPos, testfield, =
+                        vk := SubStr(testfield, StringPos+2)
+                        SetFormat, IntegerFast, hex
+                        vk += 0
+                        vk .= ""
+                        SetFormat, IntegerFast, d
+                        FlaskHotkey1={vk%vk%
+                        continue
+                     }
+                     IfInString, testfield, use_flask_in_slot2
+                     {
+                        StringGetPos, StringPos, testfield, =
+                        vk := SubStr(testfield, StringPos+2)
+                        SetFormat, IntegerFast, hex
+
+                        vk += 0
+                        vk .= ""
+                        SetFormat, IntegerFast, d
+
+                        FlaskHotkey2={vk%vk%
+                        continue
+                     }
+                     IfInString, testfield, use_flask_in_slot3
+                     {
+                        StringGetPos, StringPos, testfield, =
+                        vk := SubStr(testfield, StringPos+2)
+                        SetFormat, IntegerFast, hex
+                        vk += 0
+                        vk .= ""
+                        SetFormat, IntegerFast, d
+                        FlaskHotkey3={vk%vk%
+                        continue
+                     }
+                     IfInString, testfield, use_flask_in_slot4
+                     {
+                        StringGetPos, StringPos, testfield, =
+                        vk := SubStr(testfield, StringPos+2)
+                        SetFormat, IntegerFast, hex
+                        vk += 0
+                        vk .= ""
+                        SetFormat, IntegerFast, d
+                        FlaskHotkey4={vk%vk%
+                        continue
+                     }
+                     IfInString, testfield, use_flask_in_slot5
+                     {
+                        StringGetPos, StringPos, testfield, =
+                        vk := SubStr(testfield, StringPos+2)
+                        SetFormat, IntegerFast, hex
+                        vk += 0
+                        vk .= ""
+                        SetFormat, IntegerFast, d
+                        FlaskHotkey5={vk%vk%
+                        continue
+                     }
+                }
+            }
+            ;FlaskHotkey%A_Index%={vk%vk%
+         ;}
+
+         
+         20secsTimer:=A_TickCount
+      }
+
+      ;--------------Get keys End-----------------
+
+      PlayerStats:={}
+      ReadPlayerStats(WinID%A_Index%, PlayerStats)
+
+      CurrentConfig:=PlayerConfig["Default"]
+
+      If (PlayerStats.MaxHP<1 || PlayerStats.CurrHP=0) ;dead, don't bother
+      {
+         continue
+      }
+
+      If (!IsInGame(WinID%A_Index%))
+      {
+         LastHP:=0
+         LastES:=0
+         LastMaxHP:=0
+         LastMaxES:=0
+         continue
+      }
+      
+		If PlayerStats.MaxEShield>0
+		{
+			currEShieldRatio:=PlayerStats.CurrEShield/PlayerStats.MaxEShield
+			LastEShieldRatio:=LastES/PlayerStats.MaxEShield
+			If (LastMaxES!=PlayerStats.MaxEShield)
+			{
+				LastEShieldRatio:=0
+			}
+		}
+		Else 
+		{
+			currEShieldRatio:= 1
+		}
+
+		If (PlayerStats.MaxHP>1)
+		{
+			currLifeRatio:=PlayerStats.CurrHP/(PlayerStats.MaxHP-PlayerStats.ReservedHPFlat-PlayerStats.MaxHP*PlayerStats.ReservedHPPercent/100)
+			LastLifeRatio:=LastHP/(PlayerStats.MaxHP-PlayerStats.ReservedHPFlat-PlayerStats.MaxHP*PlayerStats.ReservedHPPercent/100)	
+			If (LastMaxHP!=PlayerStats.MaxHP)
+			{
+				LastLifeRatio:=0
+			}
+		}
+		Else
+		{
+			currLifeRatio:=1
+         LastLifeRatio:=0
+		}
+      
+		If (PlayerStats.MaxMana>0)
+		{
+			currManaRatio:=PlayerStats.CurrMana/(PlayerStats.MaxMana-PlayerStats.ReservedManaFlat-PlayerStats.MaxMana*PlayerStats.ReservedManaPercent/100)
+		}
+      
+		If (currLifeRatio<CurrentConfig.minLifeRatioToQuit || currEShieldRatio<CurrentConfig.minEShieldRatioToQuit || (currLifeRatio<LastLifeRatio And ((LastLifeRatio-currLifeRatio)>CurrentConfig.maxLifeRatioPerHitToQuit) And (CurrentConfig.maxLifeRatioPerHitToQuit<1 And CurrentConfig.maxLifeRatioPerHitToQuit>0)) || (CurrentConfig.maxEShieldRatioPerHitToQuit>0 And currEShieldRatio<LastEShieldRatio And ((LastEShieldRatio-currEShieldRatio)>CurrentConfig.maxEShieldRatioPerHitToQuit)))
+		{
+
+				run, cports.exe /close * * * * PathofExile.exe
+				continue
+		}
+
+		If (PlayerStats.CurrHP>0)
+		{
+			LastHP:=PlayerStats.CurrHP
+			LastES:=PlayerStats.CurrEShield
+			LastMaxHP:=PlayerStats.MaxHP
+			LastMaxES:=PlayerStats.MaxEShield
+		}
+		Else
+		{
+			LastHP:=0
+			LastES:=0
+			LastMaxHP:=0
+			LastMaxES:=0
+		}
+
+
+		FlasksData:=[]
+		ReadFlasksData(WinID%A_Index%,FlasksData)
+
+		WinGet, CurrPID, PID,  % "ahk_id" WinID%A_Index%
+		hwnd:=WinID%A_Index%
+		k="%hwnd%%CurrPid%"
+
+		If (!WindowQueuedFlaskEffects.HasKey(k))
+		{
+			WindowQueuedFlaskEffects[k]:={}
+		}
