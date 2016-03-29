@@ -1,0 +1,500 @@
+
+		If (currLifeRatio>=0.90)
+		{
+			WindowQueuedFlaskEffects[k].hpQueueEndtime:=A_TickCount
+         WindowQueuedFlaskEffects[k].InstantQueueEndtime:=A_TickCount
+		}
+
+		If (currManaRatio>=0.90)
+		{
+			WindowQueuedFlaskEffects[k].ManaQueueEndtime:=A_TickCount
+		}
+
+		If (PlayerStats.BuffAmount>100)
+		{
+			BuffAmount:=0
+		}
+		Else
+		{
+			BuffAmount:=PlayerStats.BuffAmount
+		}
+
+		QuicksilverBuff:=0
+
+		RemAilmentsTimer:=Round(CurrentConfig.RemAilmentsTimer/10,1)
+
+      LeavingArea:=0
+      GracePeriod:=0
+
+      TrayTip, , %Offset1%
+
+      loop, %BuffAmount%
+		{
+			BuffTimer:=PlayerStats.BuffTimer[A_Index]
+
+			If InStr(playerstats.BuffName[A_Index], "aura")
+			{
+				continue
+			}
+
+			Else If InStr(playerstats.BuffName[A_Index], "flask_utility_sprint")
+			{
+				QuicksilverBuff:=1
+				If (BuffTimer<0.25)
+				{
+					QuicksilverBuff:=0
+					BuffTimer:=0
+				}
+				continue
+			}
+
+
+			Else If (InStr(playerstats.BuffName[A_Index], "frozen"))
+			{
+				If ((FlaskOnFrozenCheck) && (BuffTimer>=RemAilmentsTimer))
+				{
+					If ((!WindowQueuedFlaskEffects[k].HasKey("FrozenQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].FrozenQueueEndtime-lagCompensation)))
+					{
+                  
+                 
+						   flaskNum:=GetMaxChargesFlaskOfMod(FlasksData,"of Heat")
+                  
+
+						If (flaskNum!="")
+						{  
+							WindowQueuedFlaskEffects[k].FrozenQueueEndtime:=A_TickCount+300
+							
+							If (trayNotIfications)
+							{
+								TrayTip, PoE AutoFlask Using "of Heat" flask %flaskNum%, %A_Space% , 2
+							}
+							hKey:=FlaskHotkey%flaskNum%
+							IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                     {
+                        Sendinput, %hkey% Down}
+                        Sendinput, %hkey% Up}
+                     } 
+                     Else
+                     {
+                        ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                     }
+						}
+					}
+				}
+				continue
+			}
+
+			Else If (InStr(playerstats.BuffName[A_Index], "shocked"))
+			{
+				If ((FlaskOnShockedCheck) && (BuffTimer>=RemAilmentsTimer))
+				{
+					If ((!WindowQueuedFlaskEffects[k].HasKey("ShockedQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].ShockedQueueEndtime-lagCompensation)))
+					{
+                  
+                  
+						   flaskNum:=GetMaxChargesFlaskOfMod(FlasksData,"of Grounding")
+						
+
+                  If (flaskNum!="")
+						{  
+							WindowQueuedFlaskEffects[k].ShockedQueueEndtime:=A_TickCount+300
+							
+							If (trayNotIfications)
+							{
+								TrayTip, PoE AutoFlask Using "of Grounding" flask %flaskNum%, %A_Space% , 2
+							}
+							hKey:=FlaskHotkey%flaskNum%
+							IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                     {
+                        Sendinput, %hkey% Down}
+                        Sendinput, %hkey% Up}
+                     } 
+                     Else
+                     {
+                        ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                     }
+						}
+					}
+				}
+				continue
+			}
+
+			Else If (InStr(playerstats.BuffName[A_Index], "ignited"))
+			{
+				If ((FlaskOnIgnitedCheck) && (BuffTimer>=RemAilmentsTimer))
+				{
+					If ((!WindowQueuedFlaskEffects[k].HasKey("IgnitedQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].IgnitedQueueEndtime-lagCompensation)))
+					{
+                  
+						   flaskNum:=GetMaxChargesFlaskOfMod(FlasksData,"of Dousing")
+                  
+
+						If (flaskNum!="")
+						{  
+							WindowQueuedFlaskEffects[k].IgnitedQueueEndtime:=A_TickCount+300
+							
+							If (trayNotIfications)
+							{
+								TrayTip, PoE AutoFlask Using "of Dousing" flask %flaskNum%, %A_Space% , 2
+							}
+							hKey:=FlaskHotkey%flaskNum%
+							IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                     {
+                        Sendinput, %hkey% Down}
+                        Sendinput, %hkey% Up}
+                     } 
+                     Else
+                     {
+                        ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                     }
+						}
+					}
+				}
+				continue
+			}
+
+         Else If (((InStr(playerstats.BuffName[A_Index], "curse"))) And !(InStr(playerstats.BuffName[A_Index], "flask")) And !(PlayerStats.BuffTimer[A_Index]="1.#INF00"))
+         {
+            If (FlaskOnCurseCheck)
+            {
+               If ((!WindowQueuedFlaskEffects[k].HasKey("CurseQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].CurseQueueEndtime-lagCompensation)))
+               {
+                  
+                     flaskNum:=GetMaxChargesFlaskOfMod(FlasksData,"of Warding")
+                  
+
+                  If (flaskNum!="")
+                  {  
+                     WindowQueuedFlaskEffects[k].CurseQueueEndtime:=A_TickCount+300
+                     
+                     If (trayNotIfications)
+                     {
+                        TrayTip, PoE AutoFlask Using "of Warding" flask %flaskNum%, %A_Space% , 2
+                     }
+                     hKey:=FlaskHotkey%flaskNum%
+                     IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                     {
+                        Sendinput, %hkey% Down}
+                        Sendinput, %hkey% Up}
+                     } 
+                     Else
+                     {
+                        ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                     }
+                  }
+               }
+            }
+            continue
+         }
+
+         Else If (InStr(playerstats.BuffName[A_Index], "corrupted_blood"))
+         {
+            global RemoveCorruptedBloodCharges
+            BuffCharges:=PlayerStats.BuffCharges[A_Index]
+            If ((FlaskOnCorruptedBloodCheck) && (BuffCharges>=RemoveCorruptedBloodCharges))
+            {
+               If ((!WindowQueuedFlaskEffects[k].HasKey("CorruptedBloodQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].CorruptedBloodQueueEndtime-lagCompensation)))
+               {
+                  
+                     flaskNum:=GetMaxChargesFlaskOfMod(FlasksData,"of Staunching")
+                 
+
+                  If (flaskNum!="")
+                  {  
+                     WindowQueuedFlaskEffects[k].CorruptedBloodQueueEndtime:=A_TickCount+300
+                     
+                     If (trayNotIfications)
+                     {
+                        TrayTip, PoE AutoFlask Using "of Staunching" flask %flaskNum%, %A_Space% , 2
+                     }
+                     hKey:=FlaskHotkey%flaskNum%
+                     IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                     {
+                        Sendinput, %hkey% Down}
+                        Sendinput, %hkey% Up}
+                     } 
+                     Else
+                     {
+                        ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                     }
+                  }
+               }
+            }
+            continue
+         }
+
+         Else If InStr(playerstats.BuffName[A_Index], "puncture")
+         {
+            If ((FlaskOnCorruptedBloodCheck))
+            {
+               If ((!WindowQueuedFlaskEffects[k].HasKey("CorruptedBloodQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].CorruptedBloodQueueEndtime-lagCompensation)))
+               {
+                  
+                     flaskNum:=GetMaxChargesFlaskOfMod(FlasksData,"of Staunching")
+                  
+
+                  If (flaskNum!="")
+                  {  
+                     WindowQueuedFlaskEffects[k].CorruptedBloodQueueEndtime:=A_TickCount+300
+                     
+                     If (trayNotIfications)
+                     {
+                        TrayTip, PoE AutoFlask Using "of Staunching" flask %flaskNum%, %A_Space% , 2
+                     }
+                     hKey:=FlaskHotkey%flaskNum%
+                     IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                     {
+                        Sendinput, %hkey% Down}
+                        Sendinput, %hkey% Up}
+                     } 
+                     Else
+                     {
+                        ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                     }
+                  }
+               }
+            }
+            continue
+         }
+         
+
+         Else If InStr(playerstats.BuffName[A_Index], "leaving_area_protection")
+         {
+            LeavingArea:=1
+            continue
+         }
+         Else If InStr(playerstats.BuffName[A_Index], "grace_period")
+         {
+            GracePeriod:=1
+            continue
+         }
+         
+
+		}
+
+      If (!GracePeriod && !LeavingArea)
+      {
+         If (currLifeRatio<CurrentConfig.minLifeRatioToInstant)
+         {
+            If ((!WindowQueuedFlaskEffects[k].HasKey("InstantQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].InstantQueueEndtime)))
+            {
+               tflaskNum2:=GetMaxChargesOfInstantFlask(FlasksData,"FlaskLife")
+               If (tflaskNum2!="")
+               {
+                  flaskNum:=tflaskNum2
+               }
+               If (flaskNum!="")
+               {  
+                  IfDelay:= (CurrentConfig.IflaskDelay*10)
+                  WindowQueuedFlaskEffects[k].InstantQueueEndtime:=A_TickCount+IfDelay
+                  If (trayNotIfications)
+                  {
+                     TrayTip, PoE AutoFlask Using HP Flask %flaskNum%, %A_Space% , 2
+                  }
+                  hKey:=FlaskHotkey%flaskNum%
+                  IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                  {
+                     Sendinput, %hkey% Down}
+                     Sendinput, %hkey% Up}
+                  } 
+                  Else
+                  {
+                     ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                  }
+                  break
+               }
+            }
+         }
+
+      	If (currLifeRatio<CurrentConfig.minLifeRatioToDrink)
+      	{
+      		If ((!WindowQueuedFlaskEffects[k].HasKey("hpQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].hpQueueEndtime-lagCompensation)))
+      		{
+      			tflaskNum2:=GetMaxChargesFlaskOfType(FlasksData,"FlaskLife")
+      			tflaskNum1:=GetMaxChargesFlaskOfType(FlasksData,"FlaskHybrid")
+      			If ((tflaskNum1!=) && (tflaskNum2!=))
+      			{
+      				flaskNum:=(FlasksData[tflaskNum1].ChargesCurrent>FlasksData[tflaskNum2].ChargesCurrent) ? tflaskNum1 : tflaskNum2
+      			}
+      			Else
+      			{
+      				If (tflaskNum1!="")
+      				{
+      					flaskNum:=tflaskNum1
+      				}
+      				If (tflaskNum2!="")
+      				{
+      					flaskNum:=tflaskNum2
+      				}
+      			}
+      			If (flaskNum!="")
+      			{  
+      				EffectDuration:=FlasksData[flaskNum].EffectDuration
+      				If (InStr(FlasksData[flaskNum].mod1,"Seething"))
+      				{
+      					WindowQueuedFlaskEffects[k].hpQueueEndtime:=A_TickCount+500
+      				}
+      				Else If (InStr(FlasksData[flaskNum].mod2,"Seething"))
+      				{
+      					WindowQueuedFlaskEffects[k].hpQueueEndtime:=A_TickCount+500
+      				}
+
+      				Else If ((InStr(FlasksData[flaskNum].mod1,"Panicked")) And ((PlayerStats.CurrHP/PlayerStats.MaxHP)<=0.35)) ; "Low Life" can be caused by auras hp reservation from blood magic
+      				{
+      					WindowQueuedFlaskEffects[k].hpQueueEndtime:=A_TickCount+500
+      				}
+      				Else If ((InStr(FlasksData[flaskNum].mod2,"Panicked")) And ((PlayerStats.CurrHP/PlayerStats.MaxHP)<=0.35)) ; "Low Life" can be caused by auras hp reservation from blood magic
+      				{
+      					WindowQueuedFlaskEffects[k].hpQueueEndtime:=A_TickCount+500
+      				}
+                
+      				Else
+      				{
+      					WindowQueuedFlaskEffects[k].hpQueueEndtime:=A_TickCount+EffectDuration*100
+      				}
+      				If (trayNotIfications)
+      				{
+      					TrayTip, PoE AutoFlask Using HP flask %flaskNum%, %A_Space% , 2
+      				}
+      				hKey:=FlaskHotkey%flaskNum%
+      				IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                  {
+                     Sendinput, %hkey% Down}
+                     Sendinput, %hkey% Up}
+                  } 
+                  Else
+                  {
+                     ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                  }
+      				Break
+      			}
+      		}
+      	}
+
+      	If (currLifeRatio<CurrentConfig.minLifeRatioToPopJade || currEShieldRatio<CurrentConfig.minEShieldRatioToPopJade)
+      	{
+      		If ((!WindowQueuedFlaskEffects[k].HasKey("jadeQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].jadeQueueEndtime-lagCompensation)))
+      		{
+      			flaskNum:=GetMaxChargesFlaskOfType(FlasksData,"FlaskUtility9") ; Jade Flask
+      			If (flaskNum!="")
+      			{
+      			   EffectDuration:=FlasksData[flaskNum].EffectDuration
+      			   WindowQueuedFlaskEffects[k].jadeQueueEndtime:=A_TickCount+EffectDuration*100
+      			   If (trayNotIfications)
+      			   {
+      			      TrayTip, PoE AutoFlask Using Jade Flask %flaskNum%, %A_Space% , 2
+      			   }
+      			   hKey:=FlaskHotkey%flaskNum%
+      			   IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                  {
+                     Sendinput, %hkey% Down}
+                     Sendinput, %hkey% Up}
+                  } 
+                  Else
+                  {
+                     ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                  }
+      			   break
+      			}
+      		}
+      		If ((!WindowQueuedFlaskEffects[k].HasKey("GraniteQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].GraniteQueueEndtime-lagCompensation)))
+      		{
+      			flaskNum:=GetMaxChargesFlaskOfType(FlasksData,"FlaskUtility5") ; Granite Flask
+      			If (flaskNum!="")
+      			{
+      				EffectDuration:=FlasksData[flaskNum].EffectDuration
+      				WindowQueuedFlaskEffects[k].GraniteQueueEndtime:=A_TickCount+EffectDuration*100
+      				If (trayNotIfications)
+      				{
+      					TrayTip, PoE AutoFlask Using Granite Flask %flaskNum%, %A_Space% , 2
+      				}
+      				hKey:=FlaskHotkey%flaskNum%
+      				IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                  {
+                     Sendinput, %hkey% Down}
+                     Sendinput, %hkey% Up}
+                  } 
+                  Else
+                  {
+                     ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                  }
+      				break
+      			}
+      		}
+      	}
+
+      	If (currLifeRatio<CurrentConfig.minLifeRatioToPopElementalResist || currEShieldRatio<CurrentConfig.minEShieldRatioToPopElementalResist)
+      	{
+      		If ((!WindowQueuedFlaskEffects[k].HasKey("RubyQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].RubyQueueEndtime-lagCompensation)))
+      		{
+      			flaskNum:=GetMaxChargesFlaskOfType(FlasksData,"FlaskUtility2") ; Ruby flask
+      			If (flaskNum!="")
+      			{
+      				EffectDuration:=FlasksData[flaskNum].EffectDuration
+      				WindowQueuedFlaskEffects[k].RubyQueueEndtime:=A_TickCount+EffectDuration*100
+      				If (trayNotIfications)
+      				{
+      					TrayTip, PoE AutoFlask Using Ruby Flask %flaskNum%, %A_Space% , 2
+      				}
+      				hKey:=FlaskHotkey%flaskNum%
+      				IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                  {
+                     Sendinput, %hkey% Down}
+                     Sendinput, %hkey% Up}
+                  } 
+                  Else
+                  {
+                     ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                  }
+      				break
+      			}
+      		}
+
+      		If ((!WindowQueuedFlaskEffects[k].HasKey("TopazQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].TopazQueueEndtime-lagCompensation)))
+      		{
+      			flaskNum:=GetMaxChargesFlaskOfType(FlasksData,"FlaskUtility4") ; Topaz flask
+      			If (flaskNum!="")
+      			{
+      				EffectDuration:=FlasksData[flaskNum].EffectDuration
+      				WindowQueuedFlaskEffects[k].TopazQueueEndtime:=A_TickCount+EffectDuration*100
+      				If (trayNotIfications)
+      				{
+      					TrayTip, PoE AutoFlask Using Topaz Flask %flaskNum%, %A_Space% , 2
+      				}
+      				hKey:=FlaskHotkey%flaskNum%
+      				IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                  {
+                     Sendinput, %hkey% Down}
+                     Sendinput, %hkey% Up}
+                  } 
+                  Else
+                  {
+                     ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                  }
+      				break
+      			}
+      		}
+
+      		If ((!WindowQueuedFlaskEffects[k].HasKey("SapphireQueueEndtime")) || (A_TickCount>=(WindowQueuedFlaskEffects[k].SapphireQueueEndtime-lagCompensation)))
+      		{
+      			flaskNum:=GetMaxChargesFlaskOfType(FlasksData,"FlaskUtility3") ; Sapphire flask
+      			If (flaskNum!="")
+      			{
+      				EffectDuration:=FlasksData[flaskNum].EffectDuration
+      				WindowQueuedFlaskEffects[k].SapphireQueueEndtime:=A_TickCount+EffectDuration*100
+      				If (trayNotIfications)
+      				{
+      					TrayTip, PoE AutoFlask Using Sapphire flask %flaskNum%, %A_Space% , 2
+      				}
+      				hKey:=FlaskHotkey%flaskNum%
+      				IfWinActive Path of Exile ahk_class Direct3DWindowClass
+                  {
+                     Sendinput, %hkey% Down}
+                     Sendinput, %hkey% Up}
+                  } 
+                  Else
+                  {
+                     ControlSend,,%hkey% Down %hkey% Up}, % "ahk_id" hwnd
+                  }
+      				break
+      			}
