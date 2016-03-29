@@ -497,3 +497,118 @@ FlaskOnFrozenCheck:
    }
    IniWrite, %FlaskOnFrozenCheck% , Config.ini, Config, FlaskOnFrozenCheck
 return 
+FlaskOnShockedCheck:
+   Gui, Submit, NoHide
+   If FlaskOnShockedCheckBox = 0
+   {
+      FlaskOnShockedCheck = 0
+      IniWrite, 0 , Config.ini, Config, FlaskOnShockedCheck
+   }
+   If FlaskOnShockedCheckBox = 1
+   {
+      FlaskOnShockedCheck = 1
+      IniWrite, 1 , Config.ini, Config, FlaskOnShockedCheck
+   }
+   IniWrite, %FlaskOnShockedCheck% , Config.ini, Config, FlaskOnShockedCheck
+return 
+
+FlaskOnIgnitedCheck:
+   Gui, Submit, NoHide
+   If FlaskOnIgnitedCheckBox = 0
+   {
+      FlaskOnIgnitedCheck = 0
+      IniWrite, 0 , Config.ini, Config, FlaskOnIgnitedCheck
+   }
+   If FlaskOnIgnitedCheckBox = 1
+   {
+      FlaskOnIgnitedCheck = 1
+      IniWrite, 1 , Config.ini, Config, FlaskOnIgnitedCheck
+   }
+   IniWrite, %FlaskOnIgnitedCheck% , Config.ini, Config, FlaskOnIgnitedCheck
+return 
+
+FlaskOnCurseCheck:
+   Gui, Submit, NoHide
+   If FlaskOnCurseCheckBox = 0
+   {
+      FlaskOnCurseCheck = 0
+      IniWrite, 0 , Config.ini, Config, FlaskOnCurseCheck
+   }
+   If FlaskOnCurseCheckBox = 1
+   {
+      FlaskOnCurseCheck = 1
+      IniWrite, 1 , Config.ini, Config, FlaskOnCurseCheck
+   }
+   IniWrite, %FlaskOnCurseCheck% , Config.ini, Config, FlaskOnCurseCheck
+return 
+
+FlaskOnCorruptedBloodCheck:
+   Gui, Submit, NoHide
+   If FlaskOnCorruptedBloodCheckBox = 0
+   {
+      FlaskOnCorruptedBloodCheck = 0
+      IniWrite, 0 , Config.ini, Config, FlaskOnCorruptedBloodCheck
+   }
+   If FlaskOnCorruptedBloodCheckBox = 1
+   {
+      FlaskOnCorruptedBloodCheck = 1
+      IniWrite, 1 , Config.ini, Config, FlaskOnCorruptedBloodCheck
+   }
+   IniWrite, %FlaskOnCorruptedBloodCheck% , Config.ini, Config, FlaskOnCorruptedBloodCheck
+return 
+
+
+showgui:
+   Gui, Show, x760 y198 h665 w474
+Return
+
+
+showgui4:
+   
+   Gui, 4:Show,,Debug Window
+
+Return
+
+DisableSlot:
+   Gui, Submit, NoHide
+   Loop, 5
+   {
+		If DisableSlot%A_Index% = 0
+		{
+			IniWrite, 0 , Config.ini, DisableSlot, DisableSlot%A_Index%
+		}
+		Else If DisableSlot%A_Index% = 1
+		{
+			IniWrite, 1 , Config.ini, DisableSlot, DisableSlot%A_Index%
+		}
+   }
+return
+
+GuiClose:
+   Gui, Submit
+   If (trayNotIfications)
+   {
+      TrayTip, Script is Still Running in the Background, %A_Space% , 2
+   }
+return
+
+
+
+;-------GUI UPDATE FUNCTIONS--------------GUI UPDATE FUNCTIONS--------------GUI UPDATE FUNCTIONS-----
+
+;-------HOTKEYS-----------------HOTKEYS-----------------HOTKEYS-----------------HOTKEYS--------------
+; Test that bound hotkeys work
+;These labels may contain any commands for their respective hotkeys to perform.
+
+F1::
+tradechat:=1
+return
+
+F12::
+Reload
+return
+
+;-------HOTKEYS-----------------HOTKEYS-----------------HOTKEYS-----------------HOTKEYS--------------
+;-----------------------ADDITIONAL MACROS---------------------------------------------
+; additional macros better run as modules
+;-------END--------------END--------------END--------------END--------------END----------------------
