@@ -1,0 +1,499 @@
+
+            BuffCharges%A_Index%value:=PlayerStats.BuffCharges[A_Index]
+            value:=BuffCharges%A_Index%value
+            GuiControl,4: , Buff%A_Index%Chargesvar , %value%
+
+            BuffTimer%A_Index%value:=PlayerStats.BuffTimer[A_Index]
+            value:=BuffTimer%A_Index%value
+            If (value="1.#INF00")
+            {
+               GuiControl,4: , Buff%A_Index%Timervar , Infinite
+            }
+            Else
+            {
+               GuiControl,4: , Buff%A_Index%Timervar , %value%
+            }
+         }
+      }
+      ;--------------Debug Window Update------------------
+      Sleep, %AutoFlaskWatchdogPeriod%
+   }
+   Sleep, 1
+}
+
+;-------MAIN FUNCTIONS-----------------MAIN FUNCTIONS-----------------MAIN FUNCTIONS-----------------
+;-------TEST FUNCTIONS-----------------TEST FUNCTIONS-----------------TEST FUNCTIONS-----------------
+;-------TEST FUNCTIONS-----------------TEST FUNCTIONS-----------------TEST FUNCTIONS-----------------
+
+;-------GUI UPDATE FUNCTIONS--------------GUI UPDATE FUNCTIONS--------------GUI UPDATE FUNCTIONS-----
+
+GuiUpdate:
+   Gui, Submit, NoHide
+
+   GuiControl, , QuickSilverMovementTimerUpdate, % Round(QuickSilverMovementTimer/10,1)
+   GuiControl, , RemoveAilmentsTimerUpdate, % Round(RemoveAilmentsTimer/10,1)
+   GuiControl, , RemoveCorruptedBloodChargesUpdate, %RemoveCorruptedBloodCharges%
+
+   If (minLifePercentToQuit=0)
+   {
+      GuiControl, , minLifePercentToQuitUpdate, N/A
+      GuiControl, , minLifePercentToQuitUpdatePercent,
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToQuitUpdate, %minLifePercentToQuit%
+      GuiControl, , minLifePercentToQuitUpdatePercent, `%
+   }
+   If (minESPercentToQuit=0)
+   {
+      GuiControl, , minESPercentToQuitUpdate, N/A
+      GuiControl, , minESPercentToQuitUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minESPercentToQuitUpdate, %minESPercentToQuit%
+      GuiControl, , minESPercentToQuitUpdatePercent, `%
+   }
+   If (maxLifePercentPerHitToQuit=0 || maxLifePercentPerHitToQuit=100)
+   {
+      GuiControl, , maxLifePercentPerHitToQuitUpdate, N/A
+      GuiControl, , maxLifePercentPerHitToQuitUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , maxLifePercentPerHitToQuitUpdate, %maxLifePercentPerHitToQuit%
+      GuiControl, , maxLifePercentPerHitToQuitUpdatePercent, `%
+   }
+   If (maxESPercentPerHitToQuit=0)
+   {
+      GuiControl, , maxESPercentPerHitToQuitUpdate, N/A
+      GuiControl, , maxESPercentPerHitToQuitUpdatePercent,
+   }
+   Else
+   {
+      GuiControl, , maxESPercentPerHitToQuitUpdate, %maxESPercentPerHitToQuit%
+      GuiControl, , maxESPercentPerHitToQuitUpdatePercent, `%
+   }
+   If (minLifePercentToJade=0)
+   {
+      GuiControl, , minLifePercentToJadeUpdate, N/A
+      GuiControl, , minLifePercentToJadeUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToJadeUpdate, %minLifePercentToJade%
+      GuiControl, , minLifePercentToJadeUpdatePercent, `% 
+   }
+   If (minESPercentToJade=0)
+   {
+      GuiControl, , minESPercentToJadeUpdate, N/A
+      GuiControl, , minESPercentToJadeUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minESPercentToJadeUpdate, %minESPercentToJade%
+      GuiControl, , minESPercentToJadeUpdatePercent, `%
+   }
+   If (minLifePercentToElementalResist=0)
+   {
+      GuiControl, , minLifePercentToElementalResistUpdate, N/A
+      GuiControl, , minLifePercentToElementalResistUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToElementalResistUpdate, %minLifePercentToElementalResist%
+      GuiControl, , minLifePercentToElementalResistUpdatePercent, `%
+   }
+   If (minESPercentToElementalResist=0)
+   {
+      GuiControl, , minESPercentToElementalResistUpdate, N/A
+      GuiControl, , minESPercentToElementalResistUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minESPercentToElementalResistUpdate, %minESPercentToElementalResist%
+      GuiControl, , minESPercentToElementalResistUpdatePercent, `%
+   }
+   If (minLifePercentToDrink=0)
+   {
+      GuiControl, , minLifePercentToDrinkUpdate, N/A
+      GuiControl, , minLifePercentToDrinkUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToDrinkUpdate, %minLifePercentToDrink%
+      GuiControl, , minLifePercentToDrinkUpdatePercent, `%
+   }
+   If (minManaPercentToDrink=0)
+   {
+      GuiControl, , minManaPercentToDrinkUpdate, N/A
+      GuiControl, , minManaPercentToDrinkUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minManaPercentToDrinkUpdate, %minManaPercentToDrink%
+      GuiControl, , minManaPercentToDrinkUpdatePercent, `%
+   }
+   If (minManaToDrinkPot=0)
+   {
+      GuiControl, , minManaToDrinkPotUpdate, N/A
+   }
+   Else
+   {
+      GuiControl, , minManaToDrinkPotUpdate, %minManaToDrinkPot%
+   }
+   If (InstantFlaskDelay=0)
+   {
+      GuiControl, , InstantFlaskDelayUpdate, N/A
+      GuiControl, , InstantFlaskDelayUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , InstantFlaskDelayUpdate,  % Round(InstantFlaskDelay/100,2)
+      GuiControl, , InstantFlaskDelayUpdatePercent, s
+
+   }
+   If (minLifePercentToSpam=0)
+   {
+      GuiControl, , minLifePercentToSpamUpdate, N/A
+      GuiControl, , minLifePercentToSpamUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToSpamUpdate, %minLifePercentToSpam%
+      GuiControl, , minLifePercentToSpamUpdatePercent, `%
+   }
+   If (TradeSpam=0)
+   {
+      GuiControl, , TradeSpamUpdate, N/A
+      GuiControl, , TradeSpamUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , TradeSpamUpdate, %TradeSpam%
+      GuiControl, , TradeSpamUpdatePercent, m
+   }
+   
+
+   Loop, 5
+   {
+		If ConfigChoice = %A_Index%
+		{
+			IniWrite, %minLifePercentToQuit% , Config.ini, Config%A_Index%, minLifePercentToQuit
+			IniWrite, %minESPercentToQuit% , Config.ini, Config%A_Index%, minESPercentToQuit
+			IniWrite, %maxLifePercentPerHitToQuit% , Config.ini, Config%A_Index%, maxLifePercentPerHitToQuit
+			IniWrite, %maxESPercentPerHitToQuit% , Config.ini, Config%A_Index%, maxESPercentPerHitToQuit
+			IniWrite, %minLifePercentToJade% , Config.ini, Config%A_Index%, minLifePercentToJade
+			IniWrite, %minESPercentToJade% , Config.ini, Config%A_Index%, minESPercentToJade
+			IniWrite, %minLifePercentToElementalResist% , Config.ini, Config%A_Index%, minLifePercentToElementalResist
+			IniWrite, %minESPercentToElementalResist% , Config.ini, Config%A_Index%, minESPercentToElementalResist
+			IniWrite, %minLifePercentToDrink% , Config.ini, Config%A_Index%, minLifePercentToDrink
+			IniWrite, %minManaPercentToDrink% , Config.ini, Config%A_Index%, minManaPercentToDrink
+			IniWrite, %minManaToDrinkPot% , Config.ini, Config%A_Index%, minManaToDrinkPot
+			IniWrite, %minLifePercentToSpam% , Config.ini, Config%A_Index%, minLifePercentToSpam
+			IniWrite, %InstantFlaskDelay% , Config.ini, Config%A_Index%, InstantFlaskDelay
+			IniWrite, %QuickSilverMovementTimer% , Config.ini, Config%A_Index%, QuickSilverMovementTimer
+			IniWrite, %RemoveAilmentsTimer% , Config.ini, Config%A_Index%, RemoveAilmentsTimer
+         IniWrite, %RemoveCorruptedBloodCharges% , Config.ini, Config%A_Index%, RemoveCorruptedBloodCharges
+		}
+   }
+
+   
+   IniWrite, %InstantFlaskDelay% , Config.ini, Config, InstantFlaskDelay
+   IfDelay:= InstantFlaskDelay
+
+   PlayerConfig["Default"]:={RemCorruptedBloodCharges:RemoveCorruptedBloodCharges,RemAilmentsTimer:RemoveAilmentsTimer,QuickSilverTimer:QuickSilverMovementTimer*100, minLifeRatioToInstant: minLifePercentToSpam/100, IflaskDelay: InstantFlaskDelay,minLifeRatioToDrink: minLifePercentToDrink/100, minManaRatioToDrink: minManaPercentToDrink/100, minManaToDrink: minManaToDrinkPot, minLifeRatioToPopElementalResist: minLifePercentToElementalResist/100,minLifeRatioToPopJade: minLifePercentToJade/100, minLifeRatioToQuit: minLifePercentToQuit/100,maxLifeRatioPerHitToQuit: maxLifePercentPerHitToQuit/100,maxEShieldRatioPerHitToQuit: maxESPercentPerHitToQuit/100,minEShieldRatioToQuit: minESPercentToQuit/100, minEShieldRatioToPopElementalResist: minESPercentToElementalResist/100, minEShieldRatioToPopJade: minESPercentToJade/100}
+
+
+return
+
+ExitSub:
+If A_ExitReason not in Logoff,Shutdown  ; Avoid spaces around the comma in this line.
+{
+    IniWrite, %TabChoice%, Config.ini, Config, LastTab
+	Process, close, %PoePID1%
+	Process, close, %PoePID2%
+	Process, close, %PoePID3%
+}
+ExitApp
+
+TabFunc:
+Gui, Submit, NoHide
+return
+
+Default:
+   Gui, Submit, NoHide
+
+    Loop, 5
+    {
+	   If ConfigChoice = %A_Index%
+	   {
+	   	  IniDelete, Config.ini, Config%A_Index%
+	   }
+	}
+   
+   Reload
+   Sleep, 2000
+   MsgBox,0,, An error ocurred, reloading script.
+ExitApp
+
+
+ConfigList:
+   Gui, Submit, NoHide
+
+
+   Loop, 5
+   {
+		If ConfigChoice = %A_Index%
+		{
+			IniRead, minLifePercentToQuit , Config.ini, Config%A_Index%, minLifePercentToQuit, 35
+			IniRead, minESPercentToQuit , Config.ini, Config%A_Index%, minESPercentToQuit, 0
+			IniRead, maxLifePercentPerHitToQuit , Config.ini, Config%A_Index%, maxLifePercentPerHitToQuit, 50
+			IniRead, maxESPercentPerHitToQuit , Config.ini, Config%A_Index%, maxESPercentPerHitToQuit, 0
+			IniRead, minLifePercentToJade , Config.ini, Config%A_Index%, minLifePercentToJade, 70
+			IniRead, minLifePercentToJade , Config.ini, Config%A_Index%, minLifePercentToJade, 70
+			IniRead, minESPercentToJade , Config.ini, Config%A_Index%, minESPercentToJade, 0
+			IniRead, minLifePercentToElementalResist , Config.ini, Config%A_Index%, minLifePercentToElementalResist, 70
+			IniRead, minESPercentToElementalResist , Config.ini, Config%A_Index%, minESPercentToElementalResist, 0
+			IniRead, minLifePercentToDrink , Config.ini, Config%A_Index%, minLifePercentToDrink, 55
+			IniRead, minManaPercentToDrink , Config.ini, Config%A_Index%, minManaPercentToDrink, 25
+			IniRead, minManaToDrinkPot , Config.ini, Config%A_Index%, minManaToDrinkPot, 15
+			IniRead, minLifePercentToSpam, Config.ini, Config%A_Index%, minLifePercentToSpam, 35
+			IniRead, ResyncSpam, Config.ini, Config%A_Index%, ResyncSpam, 0
+         IniRead, RemainingSpam, Config.ini, Config%A_Index%, RemainingSpam, 0
+			IniRead, InstantFlaskDelay, Config.ini, Config%A_Index%, InstantFlaskDelay, 0
+			IniRead, QuickSilverMovementTimer , Config.ini, Config%A_Index%, QuickSilverMovementTimer, 15
+         IniRead, RemoveAilmentsTimer , Config.ini, Config%A_Index%, RemoveAilmentsTimer, 10
+         IniRead, RemoveCorruptedBloodCharges, Config.ini, Config%A_Index%, RemoveCorruptedBloodCharges, 10
+			IniWrite, %A_Index%, Config.ini, Config, ConfigNumber
+		}
+	}
+
+
+   GuiControl, , minLifePercentToQuit, %minLifePercentToQuit%
+   GuiControl, , maxLifePercentPerHitToQuit, %maxLifePercentPerHitToQuit%
+   GuiControl, , maxESPercentPerHitToQuit, %maxESPercentPerHitToQuit%
+   GuiControl, , minESPercentToQuit, %minESPercentToQuit%
+   GuiControl, , minLifePercentToJade, %minLifePercentToJade%
+   GuiControl, , minESPercentToJade, %minESPercentToJade%
+   GuiControl, , minLifePercentToElementalResist, %minLifePercentToElementalResist%
+   GuiControl, , minESPercentToElementalResist, %minESPercentToElementalResist%
+   GuiControl, , minLifePercentToDrink, %minLifePercentToDrink%
+   GuiControl, , minManaPercentToDrink, %minManaPercentToDrink%
+   GuiControl, , minManaToDrinkPot, %minManaToDrinkPot%
+   GuiControl, , minLifePercentToSpam, %minLifePercentToSpam%
+   GuiControl, , ResyncSpam, %ResyncSpam%
+   GuiControl, , RemainingSpam, %RemainingSpam%
+   GuiControl, , InstantFlaskDelay, %InstantFlaskDelay%
+   GuiControl, , QuickSilverMovementTimer, %QuickSilverMovementTimer%
+   GuiControl, , RemoveAilmentsTimer, %RemoveAilmentsTimer%
+   GuiControl, , RemoveCorruptedBloodCharges, %RemoveCorruptedBloodCharges%
+
+
+   GuiControl, , QuickSilverMovementTimerUpdate, % Round(QuickSilverMovementTimer/10,1)
+   GuiControl, , RemoveAilmentsTimerUpdate, % Round(RemoveAilmentsTimer/10,1)
+   GuiControl, , RemoveCorruptedBloodChargesUpdate, %RemoveCorruptedBloodCharges%
+
+   If (minLifePercentToQuit=0)
+   {
+      GuiControl, , minLifePercentToQuitUpdate, N/A
+      GuiControl, , minLifePercentToQuitUpdatePercent,
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToQuitUpdate, %minLifePercentToQuit%
+      GuiControl, , minLifePercentToQuitUpdatePercent, `%
+   }
+   If (minESPercentToQuit=0)
+   {
+      GuiControl, , minESPercentToQuitUpdate, N/A
+      GuiControl, , minESPercentToQuitUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minESPercentToQuitUpdate, %minESPercentToQuit%
+      GuiControl, , minESPercentToQuitUpdatePercent, `%
+   }
+   If (maxLifePercentPerHitToQuit=0 || maxLifePercentPerHitToQuit=100)
+   {
+      GuiControl, , maxLifePercentPerHitToQuitUpdate, N/A
+      GuiControl, , maxLifePercentPerHitToQuitUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , maxLifePercentPerHitToQuitUpdate, %maxLifePercentPerHitToQuit%
+      GuiControl, , maxLifePercentPerHitToQuitUpdatePercent, `%
+   }
+   If (maxESPercentPerHitToQuit=0)
+   {
+      GuiControl, , maxESPercentPerHitToQuitUpdate, N/A
+      GuiControl, , maxESPercentPerHitToQuitUpdatePercent,
+   }
+   Else
+   {
+      GuiControl, , maxESPercentPerHitToQuitUpdate, %maxESPercentPerHitToQuit%
+      GuiControl, , maxESPercentPerHitToQuitUpdatePercent, `%
+   }
+   If (minLifePercentToJade=0)
+   {
+      GuiControl, , minLifePercentToJadeUpdate, N/A
+      GuiControl, , minLifePercentToJadeUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToJadeUpdate, %minLifePercentToJade%
+      GuiControl, , minLifePercentToJadeUpdatePercent, `% 
+   }
+   If (minESPercentToJade=0)
+   {
+      GuiControl, , minESPercentToJadeUpdate, N/A
+      GuiControl, , minESPercentToJadeUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minESPercentToJadeUpdate, %minESPercentToJade%
+      GuiControl, , minESPercentToJadeUpdatePercent, `%
+   }
+   If (minLifePercentToElementalResist=0)
+   {
+      GuiControl, , minLifePercentToElementalResistUpdate, N/A
+      GuiControl, , minLifePercentToElementalResistUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToElementalResistUpdate, %minLifePercentToElementalResist%
+      GuiControl, , minLifePercentToElementalResistUpdatePercent, `%
+   }
+   If (minESPercentToElementalResist=0)
+   {
+      GuiControl, , minESPercentToElementalResistUpdate, N/A
+      GuiControl, , minESPercentToElementalResistUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minESPercentToElementalResistUpdate, %minESPercentToElementalResist%
+      GuiControl, , minESPercentToElementalResistUpdatePercent, `%
+   }
+   If (minLifePercentToDrink=0)
+   {
+      GuiControl, , minLifePercentToDrinkUpdate, N/A
+      GuiControl, , minLifePercentToDrinkUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToDrinkUpdate, %minLifePercentToDrink%
+      GuiControl, , minLifePercentToDrinkUpdatePercent, `%
+   }
+   If (minManaPercentToDrink=0)
+   {
+      GuiControl, , minManaPercentToDrinkUpdate, N/A
+      GuiControl, , minManaPercentToDrinkUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minManaPercentToDrinkUpdate, %minManaPercentToDrink%
+      GuiControl, , minManaPercentToDrinkUpdatePercent, `%
+   }
+   If (minManaToDrinkPot=0)
+   {
+      GuiControl, , minManaToDrinkPotUpdate, N/A
+   }
+   Else
+   {
+      GuiControl, , minManaToDrinkPotUpdate, %minManaToDrinkPot%
+   }
+   If (InstantFlaskDelay=0)
+   {
+      GuiControl, , InstantFlaskDelayUpdate, N/A
+      GuiControl, , InstantFlaskDelayUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , InstantFlaskDelayUpdate,  % Round(InstantFlaskDelay/100,2)
+      GuiControl, , InstantFlaskDelayUpdatePercent, s
+
+   }
+   If (minLifePercentToSpam=0)
+   {
+      GuiControl, , minLifePercentToSpamUpdate, N/A
+      GuiControl, , minLifePercentToSpamUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , minLifePercentToSpamUpdate, %minLifePercentToSpam%
+      GuiControl, , minLifePercentToSpamUpdatePercent, `%
+   }
+   If (TradeSpam=0)
+   {
+      GuiControl, , TradeSpamUpdate, N/A
+      GuiControl, , TradeSpamUpdatePercent, 
+   }
+   Else
+   {
+      GuiControl, , TradeSpamUpdate, %TradeSpam%
+      GuiControl, , TradeSpamUpdatePercent, m
+   }
+
+   PlayerConfig["Default"]:={RemCorruptedBloodCharges:RemoveCorruptedBloodCharges,RemAilmentsTimer:RemoveAilmentsTimer,QuickSilverTimer:QuickSilverMovementTimer*100, minLifeRatioToInstant: minLifePercentToSpam/100, IflaskDelay: InstantFlaskDelay,minLifeRatioToDrink: minLifePercentToDrink/100, minManaRatioToDrink: minManaPercentToDrink/100, minManaToDrink: minManaToDrinkPot, minLifeRatioToPopElementalResist: minLifePercentToElementalResist/100,minLifeRatioToPopJade: minLifePercentToJade/100, minLifeRatioToQuit: minLifePercentToQuit/100,maxLifeRatioPerHitToQuit: maxLifePercentPerHitToQuit/100,maxEShieldRatioPerHitToQuit: maxESPercentPerHitToQuit/100,minEShieldRatioToQuit: minESPercentToQuit/100, minEShieldRatioToPopElementalResist: minESPercentToElementalResist/100, minEShieldRatioToPopJade: minESPercentToJade/100}
+   
+return
+
+TrayNotIficationsCheck:
+   Gui, Submit, NoHide
+   If TrayCheckBox = 0
+   {
+      TrayNotIficationsCheck = 0
+      trayNotIfications:=true
+   }
+   If TrayCheckBox = 1
+   {
+      TrayNotIficationsCheck = 1
+      trayNotIfications:=false
+   }
+   IniWrite, %TrayNotIficationsCheck% , Config.ini, Config, TrayNotIficationsCheck
+return   
+
+QuickSilverCheck:
+   Gui, Submit, NoHide
+   If QuickSilverCheckBox = 0
+   {
+      QuickSilverCheck = 0
+      IniWrite, 0 , Config.ini, Config, QuickSilverCheck
+   }
+   If QuickSilverCheckBox = 1
+   {
+      QuickSilverCheck = 1
+      IniWrite, 1 , Config.ini, Config, QuickSilverCheck
+   }
+   IniWrite, %QuickSilverCheck% , Config.ini, Config, QuickSilverCheck
+return 
+
+QuickSilverCheck2:
+   Gui, Submit, NoHide
+   If QuickSilverCheckBox2 = 0
+   {
+      QuickSilverCheck2 = 0
+      IniWrite, 0 , Config.ini, Config, QuickSilverCheck2
+   }
+   If QuickSilverCheckBox2 = 1
+   {
+      QuickSilverCheck2 = 1
+      IniWrite, 1 , Config.ini, Config, QuickSilverCheck2
+   }
+   IniWrite, %QuickSilverCheck2% , Config.ini, Config, QuickSilverCheck2
+return 
+
+FlaskOnFrozenCheck:
+   Gui, Submit, NoHide
+   If FlaskOnFrozenCheckBox = 0
+   {
+      FlaskOnFrozenCheck = 0
+      IniWrite, 0 , Config.ini, Config, FlaskOnFrozenCheck
+   }
+   If FlaskOnFrozenCheckBox = 1
+   {
+      FlaskOnFrozenCheck = 1
+      IniWrite, 1 , Config.ini, Config, FlaskOnFrozenCheck
+   }
+   IniWrite, %FlaskOnFrozenCheck% , Config.ini, Config, FlaskOnFrozenCheck
+return 
