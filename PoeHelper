@@ -1,0 +1,500 @@
+;Completed
+;Seperated most hotkeys into another script module pathofmacros-like
+;removed dps calc
+;chicken is gone
+;remove all steam and garena
+;integrate poeitemlookup and poeiteminfo modularized
+
+;--------------------STARTUP AND CHECKS-----------------------
+
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#SingleInstance FORCE
+;#Warn  ; Enable warnings to assist with detecting common errors.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+FileEncoding , UTF-8
+SetTitleMatchMode, 3
+Process, priority, , High
+
+;Menu, tray, Icon, data\poe-bw.ico
+
+
+If (A_AhkVersion <= "1.1.15")
+{
+	msgbox, You need AutoHotkey v1.1.15 or later to run this script. `n`nPlease go to http://ahkscript.org/download and download a recent version.
+	exit
+}
+
+If !A_IsAdmin {
+	Run *RunAs "%A_ScriptFullPath%"
+	ExitApp
+}
+
+IfNotExist, cports.exe
+{
+
+	MsgBox, Autologout/Logout will not Work without cports installed!
+
+}
+
+Run PoE_Item\POE_ItemInfo.exe, , , PoePID1
+Run PoE_Item\POE_ItemLookup.exe, , , PoePID2
+Run PoEHotkeys.ahk, , , PoePID3
+
+;-------GUI-----------------GUI-----------------GUI-----------------GUI-----------------GUI----------
+
+
+IniRead, LastTab, Config.ini, Config, LastTab, Settings
+
+If LastTab = AutoFlask
+{
+   Gui,Add,Tab2, x0 y0 w474 h595 gTabFunc vTabChoice,AutoFlask||AutoQuit|Settings|
+}
+Else If LastTab = AutoQuit
+{
+   Gui,Add,Tab2, x0 y0 w474 h595 gTabFunc vTabChoice,AutoFlask|AutoQuit||Settings|
+}
+Else If LastTab = Settings
+{
+   Gui,Add,Tab2, x0 y0 w474 h595 gTabFunc vTabChoice,AutoFlask|AutoQuit|Settings||
+}
+
+Gui, Tab, Settings
+
+Gui, Add, GroupBox, x12 y110 w220 h60, AutoFlask/AutoQuit Profile
+
+IniRead, ConfigNumber , Config.ini, Config, ConfigNumber, 1
+
+If ConfigNumber = 1
+{
+   Gui, Add, DropDownList, x22 y130 w200 h21 AltSubmit gConfigList vConfigChoice R5 , Profile 1||Profile 2|Profile 3|Profile 4|Profile 5
+}
+Else If ConfigNumber = 2
+{
+   Gui, Add, DropDownList, x22 y130 w200 h21 AltSubmit gConfigList vConfigChoice R5 , Profile 1|Profile 2||Profile 3|Profile 4|Profile 5
+}
+Else If ConfigNumber = 3
+{
+   Gui, Add, DropDownList, x22 y130 w200 h21 AltSubmit gConfigList vConfigChoice R5 , Profile 1|Profile 2|Profile 3||Profile 4|Profile 5
+}
+Else If ConfigNumber = 4
+{
+   Gui, Add, DropDownList, x22 y130 w200 h21 AltSubmit gConfigList vConfigChoice R5 , Profile 1|Profile 2|Profile 3|Profile 4||Profile 5
+}
+Else If ConfigNumber = 5
+{
+   Gui, Add, DropDownList, x22 y130 w200 h21 AltSubmit gConfigList vConfigChoice R5 , Profile 1|Profile 2|Profile 3|Profile 4|Profile 5||
+}
+
+Loop, 5
+{
+	If ConfigNumber = %A_Index%
+	{
+		IniRead, minLifePercentToQuit , Config.ini, Config%A_Index%, minLifePercentToQuit, 35
+		IniRead, minESPercentToQuit , Config.ini, Config%A_Index%, minESPercentToQuit, 0
+		IniRead, maxLifePercentPerHitToQuit , Config.ini, Config%A_Index%, maxLifePercentPerHitToQuit, 50
+		IniRead, maxESPercentPerHitToQuit , Config.ini, Config%A_Index%, maxESPercentPerHitToQuit, 0
+		IniRead, minLifePercentToJade , Config.ini, Config%A_Index%, minLifePercentToJade, 70
+		IniRead, minLifePercentToJade , Config.ini, Config%A_Index%, minLifePercentToJade, 70
+		IniRead, minESPercentToJade , Config.ini, Config%A_Index%, minESPercentToJade, 0
+		IniRead, minLifePercentToElementalResist , Config.ini, Config%A_Index%, minLifePercentToElementalResist, 70
+		IniRead, minESPercentToElementalResist , Config.ini, Config%A_Index%, minESPercentToElementalResist, 0
+		IniRead, minLifePercentToDrink , Config.ini, Config%A_Index%, minLifePercentToDrink, 55
+		IniRead, minManaPercentToDrink , Config.ini, Config%A_Index%, minManaPercentToDrink, 25
+		IniRead, minManaToDrinkPot , Config.ini, Config%A_Index%, minManaToDrinkPot, 15
+		IniRead, minLifePercentToSpam, Config.ini, Config%A_Index%, minLifePercentToSpam, 35
+		IniRead, ResyncSpam, Config.ini, Config%A_Index%, ResyncSpam, 0
+		IniRead, RemainingSpam, Config.ini, Config%A_Index%, RemainingSpam, 0
+		IniRead, InstantFlaskDelay, Config.ini, Config%A_Index%, InstantFlaskDelay, 0
+		IniRead, QuickSilverMovementTimer , Config.ini, Config%A_Index%, QuickSilverMovementTimer, 15
+		IniRead, RemoveAilmentsTimer , Config.ini, Config%A_Index%, RemoveAilmentsTimer, 10
+		IniRead, RemoveCorruptedBloodCharges , Config.ini, Config%A_Index%, RemoveCorruptedBloodCharges, 10
+	}	
+}
+
+IniRead, QuickSilverCheck , Config.ini, Config, QuickSilverCheck, 0
+
+IniRead, QuickSilverCheck2 , Config.ini, Config, QuickSilverCheck2, 0
+
+IniRead, FlaskOnFrozenCheck , Config.ini, Config, FlaskOnFrozenCheck, 0
+
+IniRead, FlaskOnShockedCheck , Config.ini, Config, FlaskOnShockedCheck, 0
+
+IniRead, FlaskOnIgnitedCheck , Config.ini, Config, FlaskOnIgnitedCheck, 0
+
+IniRead, AttackInPlaceCheck , Config.ini, Config, AttackInPlaceCheck, 0
+
+IniRead, HoldCtrlCheck , Config.ini, Config, HoldCtrlCheck, 0
+
+IniRead, FlaskOnCurseCheck , Config.ini, Config, FlaskOnCurseCheck, 0
+
+IniRead, FlaskOnCorruptedBloodCheck , Config.ini, Config, FlaskOnCorruptedBloodCheck, 0
+
+Gui, Tab, AutoFlask
+
+Gui, Add, GroupBox, x12 y250 w220 h60 , Min Life `% to Use Jade/Granite Flask
+Gui, Add, Slider, x22 y270 w170 h30 gGuiUpdate vminLifePercentToJade +ToolTip TickInterval25, %minLifePercentToJade%
+Gui, Add, Text, x192 y270 w20 h30 vminLifePercentToJadeUpdate , %minLifePercentToJade%
+Gui, Add, Text, x212 y270 w10 h30 vminLifePercentToJadeUpdatePercent, `%
+
+Gui, Add, GroupBox, x242 y250 w220 h60 , Min E.Shield `% to Use Jade/Granite Flask
+Gui, Add, Slider, x252 y270 w170 h30 gGuiUpdate vminESPercentToJade +ToolTip TickInterval25, %minESPercentToJade%
+Gui, Add, Text, x422 y270 w20 h30 vminESPercentToJadeUpdate, %minESPercentToJade%
+Gui, Add, Text, x442 y270 w10 h30 vminESPercentToJadeUpdatePercent, `%
+
+Gui, Add, GroupBox, x12 y320 w220 h60 , Min Life `% to Use Elemental Resist Flask
+Gui, Add, Slider, x22 y340 w170 h30 gGuiUpdate vminLifePercentToElementalResist +ToolTip TickInterval25, %minLifePercentToElementalResist%
+Gui, Add, Text, x192 y340 w20 h30 vminLifePercentToElementalResistUpdate, %minLifePercentToElementalResist%
+Gui, Add, Text, x212 y340 w10 h30 vminLifePercentToElementalResistUpdatePercent, `%
+
+Gui, Add, GroupBox, x242 y320 w220 h60 , Min E.Shield `% to Use Element. Resist Flask
+Gui, Add, Slider, x252 y340 w170 h30 gGuiUpdate vminESPercentToElementalResist +ToolTip TickInterval25, %minESPercentToElementalResist%
+Gui, Add, Text, x422 y340 w20 h30 vminESPercentToElementalResistUpdate, %minESPercentToElementalResist%
+Gui, Add, Text, x442 y340 w10 h30 vminESPercentToElementalResistUpdatePercent, `%
+
+Gui, Add, GroupBox, x12 y40 w220 h60 , Min Life `% to Drink Health Potion
+Gui, Add, Slider, x22 y60 w170 h30 gGuiUpdate vminLifePercentToDrink +ToolTip TickInterval25, %minLifePercentToDrink%
+Gui, Add, Text, x192 y60 w20 h30 vminLifePercentToDrinkUpdate, %minLifePercentToDrink%
+Gui, Add, Text, x212 y60 w10 h30 vminLifePercentToDrinkUpdatePercent, `%
+
+Gui, Add, GroupBox, x242 y40 w220 h60 , Min Mana `% to Drink Mana Potion
+Gui, Add, Slider, x252 y60 w170 h30 gGuiUpdate vminManaPercentToDrink +ToolTip TickInterval25, %minManaPercentToDrink%
+Gui, Add, Text, x422 y60 w20 h30 vminManaPercentToDrinkUpdate, %minManaPercentToDrink%
+Gui, Add, Text, x442 y60 w10 h30 vminManaPercentToDrinkUpdatePercent, `%
+
+Gui, Add, GroupBox, x12 y180 w220 h60 , Min Life `% to Spam Instant Flasks
+Gui, Add, Slider, x22 y200 w170 h30 gGuiUpdate vminLifePercentToSpam +ToolTip TickInterval25, %minLifePercentToSpam%
+Gui, Add, Text, x192 y200 w20 h30 vminLifePercentToSpamUpdate, %minLifePercentToSpam%
+Gui, Add, Text, x212 y200 w10 h30 vminLifePercentToSpamUpdatePercent, `%
+
+Gui, Add, GroupBox, x242 y110 w220 h60 , Min Mana to Drink Mana Potion
+Gui, Add, Slider, x252 y130 w170 h30 Range0-300 gGuiUpdate vminManaToDrinkPot +ToolTip TickInterval50, %minManaToDrinkPot%
+Gui, Add, Text, x422 y130 w30 h30 vminManaToDrinkPotUpdate, %minManaToDrinkPot%
+
+Gui, Add, GroupBox, x242 y180 w220 h60 , Instant Flask Spam Delay  ;x12 y149 w220 h60
+IniRead, InstantFlaskDelay , Config.ini, Config, InstantFlaskDelay, 0
+Gui, Add, Slider, x252 y200 w170 h30 Range0-50 gGuiUpdate vInstantFlaskDelay +ToolTip TickInterval50, %InstantFlaskDelay%
+Gui, Add, Text, x422 y200 w25 h30 vInstantFlaskDelayUpdate, % Round(InstantFlaskDelay/100,2)
+Gui, Add, Text, x447 y200 w10 h30 vInstantFlaskDelayUpdatePercent, s
+
+Gui, Add, GroupBox, x12 y390 w220 h60 , Only QuickSilver If Moving for X Seconds
+Gui, Add, Slider, x22 y410 w170 h30 Range0-100 gGuiUpdate vQuickSilverMovementTimer +ToolTip TickInterval20, %QuickSilverMovementTimer%
+Gui, Add, Text, x192 y410 w22 h30 vQuickSilverMovementTimerUpdate, % Round(QuickSilverMovementTimer/10,1)
+Gui, Add, Text, x214 y410 w10 h30 , s
+
+Gui, Add, GroupBox, x12 y460 w220 h60 , Only Remove Ailments If They Are Over
+Gui, Add, Slider, x22 y480 w170 h30 Range0-50 gGuiUpdate vRemoveAilmentsTimer +ToolTip TickInterval10, %RemoveAilmentsTimer%
+Gui, Add, Text, x192 y480 w22 h30 vRemoveAilmentsTimerUpdate, % Round(RemoveAilmentsTimer/10,1)
+Gui, Add, Text, x214 y480 w10 h30 , s
+
+Gui, Add, GroupBox, x12 y530 w220 h60 , Only Remove Corrupted Blood If X Charges
+Gui, Add, Slider, x22 y550 w170 h30 Range1-20 gGuiUpdate vRemoveCorruptedBloodCharges +ToolTip, %RemoveCorruptedBloodCharges%
+Gui, Add, Text, x192 y550 w12 h30 vRemoveCorruptedBloodChargesUpdate, %RemoveCorruptedBloodCharges%
+Gui, Add, Text, x210 y550 w20 h30 , ch
+
+Gui, Add, GroupBox, x12 y110 w220 h60 , Disable AutoFlask on Slot ;x12 y359 w220 h60
+
+Loop, 5
+{
+	IniRead, Slot%A_Index%Disabled, Config.ini, DisableSlot, DisableSlot%A_Index%, 0
+	XSlot:=((A_Index*40)-18)
+	X=x%XSlot%
+	If (Slot%A_Index%Disabled = 0)
+	Gui, Add, CheckBox, %X% y130 w30 h30 vDisableSlot%A_Index% gDisableSlot, %A_Index%
+	Else If (Slot%A_Index%Disabled = 1)
+	Gui, Add, CheckBox, %X% y130 w30 h30 checked vDisableSlot%A_Index% gDisableSlot, %A_Index%
+}
+
+If QuickSilverCheck = 0
+{
+   Gui, Add, CheckBox, x242 y389 w220 h30 vQuickSilverCheckBox gQuickSilverCheck, Use QuickSilver Flask When 40+ Charges
+}
+If QuickSilverCheck = 1
+{
+   Gui, Add, CheckBox, x242 y389 w220 h30  vQuickSilverCheckBox gQuickSilverCheck Checked, Use QuickSilver Flask When 40+ Charges
+}
+
+If QuickSilverCheck2 = 0
+{
+   Gui, Add, CheckBox, x242 y418 w220 h30 vQuickSilverCheckBox2 gQuickSilverCheck2, Use QuickSilver Flask When 20+ Charges
+}
+If QuickSilverCheck2 = 1
+{
+   Gui, Add, CheckBox, x242 y418 w220 h30  vQuickSilverCheckBox2 gQuickSilverCheck2 Checked, Use QuickSilver Flask When 20+ Charges
+}
+
+If FlaskOnFrozenCheck = 0
+{
+   Gui, Add, CheckBox, x242 y447 w220 h30 vFlaskOnFrozenCheckBox gFlaskOnFrozenCheck, Use Flask to Remove Frozen Ailment
+}
+If FlaskOnFrozenCheck = 1
+{
+   Gui, Add, CheckBox, x242 y447 w220 h30  vFlaskOnFrozenCheckBox gFlaskOnFrozenCheck Checked, Use Flask to Remove Frozen Ailment
+}
+
+If FlaskOnShockedCheck = 0
+{
+   Gui, Add, CheckBox, x242 y475 w220 h30 vFlaskOnShockedCheckBox gFlaskOnShockedCheck, Use Flask to Remove Shocked Ailment
+}
+If FlaskOnShockedCheck = 1
+{
+   Gui, Add, CheckBox, x242 y475 w220 h30  vFlaskOnShockedCheckBox gFlaskOnShockedCheck Checked, Use Flask to Remove Shocked Ailment
+}
+
+If FlaskOnIgnitedCheck = 0
+{
+   Gui, Add, CheckBox, x242 y503 w220 h30 vFlaskOnIgnitedCheckBox gFlaskOnIgnitedCheck, Use Flask to Remove Burning Ailment
+}
+If FlaskOnIgnitedCheck = 1
+{
+   Gui, Add, CheckBox, x242 y503 w220 h30  vFlaskOnIgnitedCheckBox gFlaskOnIgnitedCheck Checked, Use Flask to Remove Burning Ailment
+}
+
+If FlaskOnCurseCheck = 0
+{
+   Gui, Add, CheckBox, x242 y531 w220 h30 vFlaskOnCurseCheckBox gFlaskOnCurseCheck, Use Flask to Remove Curses
+}
+If FlaskOnCurseCheck = 1
+{
+   Gui, Add, CheckBox, x242 y531 w220 h30  vFlaskOnCurseCheckBox gFlaskOnCurseCheck Checked, Use Flask to Remove Curses
+}
+
+If FlaskOnCorruptedBloodCheck = 0
+{
+   Gui, Add, CheckBox, x242 y558 w220 h30 vFlaskOnCorruptedBloodCheckBox gFlaskOnCorruptedBloodCheck, Use Flask to Remove Corrupted Blood
+}
+If FlaskOnCorruptedBloodCheck = 1
+{
+   Gui, Add, CheckBox, x242 y558 w220 h30  vFlaskOnCorruptedBloodCheckBox gFlaskOnCorruptedBloodCheck Checked, Use Flask to Remove Corrupted Blood
+}
+
+
+Gui, Tab, AutoQuit
+
+Gui, Add, GroupBox, x12 y180 w220 h60, Auto Quit Method
+Gui, Add, Text, x22 y200 w200 h21, Using Cports for Logout
+
+Gui, Add, GroupBox, x12 y40 w220 h60 , Min Life `% to Quit
+Gui, Add, Slider, x22 y60 w170 h30 gGuiUpdate vminLifePercentToQuit +ToolTip TickInterval25, %minLifePercentToQuit%
+Gui, Add, Text, x192 y60 w20 h30 vminLifePercentToQuitUpdate, %minLifePercentToQuit%
+Gui, Add, Text, x212 y60 w10 h30 vminLifePercentToQuitUpdatePercent, `%
+
+Gui, Add, GroupBox, x242 y40 w220 h60 , Min Energy Shield `% to Quit
+Gui, Add, Slider, x252 y60 w170 h30 gGuiUpdate vminESPercentToQuit +ToolTip TickInterval25, %minESPercentToQuit%
+Gui, Add, Text, x422 y60 w20 h30 vminESPercentToQuitUpdate, %minESPercentToQuit%
+Gui, Add, Text, x442 y60 w10 h30 vminESPercentToQuitUpdatePercent, `%
+
+Gui, Add, GroupBox, x12 y110 w220 h60 , Max Life `% Per Hit to Quit
+Gui, Add, Slider, x22 y130 w170 h30 gGuiUpdate vmaxLifePercentPerHitToQuit +ToolTip TickInterval25, %maxLifePercentPerHitToQuit%
+Gui, Add, Text, x192 y130 w20 h30 vmaxLifePercentPerHitToQuitUpdate, %maxLifePercentPerHitToQuit%
+Gui, Add, Text, x212 y130 w10 h30 vmaxLifePercentPerHitToQuitUpdatePercent, `%
+
+Gui, Add, GroupBox, x242 y110 w220 h60 , Max Energy Shield `% Per Hit to Quit
+Gui, Add, Slider, x252 y130 w170 h30 gGuiUpdate vmaxESPercentPerHitToQuit +ToolTip TickInterval25, %maxESPercentPerHitToQuit%
+Gui, Add, Text, x422 y130 w20 h30 vmaxESPercentPerHitToQuitUpdate, %maxESPercentPerHitToQuit%
+Gui, Add, Text, x442 y130 w10 h30 vmaxESPercentPerHitToQuitUpdatePercent, `%
+
+Gui, Tab, Settings
+
+;display tray notIfications about script actions : drinking potions, autoquitting
+IniRead, TrayNotIficationsCheck , Config.ini, Config, TrayNotIficationsCheck, 0
+If TrayNotIficationsCheck = 0
+{
+   Gui, Add, CheckBox, x272 y40 w190 h30 vTrayCheckBox gTrayNotIficationsCheck, Disable Tray NotIfications
+   global trayNotIfications:=true
+}
+If TrayNotIficationsCheck = 1
+{
+   Gui, Add, CheckBox, x272 y40 w190 h30 vTrayCheckBox gTrayNotIficationsCheck Checked, Disable Tray NotIfications
+   global trayNotIfications:=false
+}
+
+Gui, Add, GroupBox, x12 y40 w220 h60 , Base Pointer
+Gui, Add, Text, x92 y60 w130 h30, Will Automatically Find Itself On New Client/Patch
+IniRead, baseMgrPtr , Config.ini, Config, baseMgrPtr, 0
+Gui, Add, Text, x22 y70 w70 h20 vbasePtrText , %baseMgrPtr%
+
+Gui, Add, Button, x32 y190 w180 h40 gshowgui4, Debug Window
+
+Gui, Add, GroupBox, x12 y250 w220 h60, Client Server
+Gui, Add, Text, x22 y270 w200 h21, Only Global Client
+
+
+Gui, Tab, Settings
+
+IniRead, TradeSpam, Config.ini, Config, TradeSpam, 0
+Gui, Add, GroupBox, x242 y110  w220 h60 , Send Trade Message Every X Minutes*
+Gui, Add, Slider, x242 y130 w170 h30 gGuiUpdate vTradeSpam +ToolTip TickInterval1 Range0-10, %TradeSpam%
+Gui, Add, Text, x242 y150 w20 h30 vTradeSpamUpdate, %TradeSpam%
+Gui, Add, Text, x262 y150 w10 h30 vTradeSpamUpdatePercent, m
+
+Gui, Add, Text,  x22 y565 w400 h21, *Opening the chat will stop and reset the trade spam.
+
+Gui, Tab
+
+Gui, Add, Button, x22 y609 w130 h40 gDefault, Reset Profile
+
+Gui, Add, GroupBox, x0 y590 w472 h74 ,
+Gui, Add, GroupBox, x1 y591 w470 h72 ,
+Gui, Add, GroupBox, x2 y592 w468 h70 ,
+Gui, Add, GroupBox, x3 y593 w466 h68 ,
+Gui, Add, GroupBox, x4 y594 w464 h66 ,
+
+Gui, Add, GroupBox, x0 y21 w472 h575 ,
+Gui, Add, GroupBox, x1 y22 w470 h574 ,
+Gui, Add, GroupBox, x2 y23 w468 h573 ,
+Gui, Add, GroupBox, x3 y24 w466 h572 ,
+Gui, Add, GroupBox, x4 y25 w464 h571 ,
+
+Menu, Tray, Add, Configuration Window, showgui
+
+If (minLifePercentToQuit=0)
+{
+   GuiControl, , minLifePercentToQuitUpdate, N/A
+   GuiControl, , minLifePercentToQuitUpdatePercent,
+}
+If (minESPercentToQuit=0)
+{
+   GuiControl, , minESPercentToQuitUpdate, N/A
+   GuiControl, , minESPercentToQuitUpdatePercent, 
+}
+If (maxLifePercentPerHitToQuit=0 || maxLifePercentPerHitToQuit=100)
+{
+   GuiControl, , maxLifePercentPerHitToQuitUpdate, N/A
+   GuiControl, , maxLifePercentPerHitToQuitUpdatePercent, 
+}
+If (maxESPercentPerHitToQuit=0)
+{
+   GuiControl, , maxESPercentPerHitToQuitUpdate, N/A
+   GuiControl, , maxESPercentPerHitToQuitUpdatePercent,
+}
+If (minLifePercentToJade=0)
+{
+   GuiControl, , minLifePercentToJadeUpdate, N/A
+   GuiControl, , minLifePercentToJadeUpdatePercent, 
+}
+If (minESPercentToJade=0)
+{
+   GuiControl, , minESPercentToJadeUpdate, N/A
+   GuiControl, , minESPercentToJadeUpdatePercent, 
+}
+If (minLifePercentToElementalResist=0)
+{
+   GuiControl, , minLifePercentToElementalResistUpdate, N/A
+   GuiControl, , minLifePercentToElementalResistUpdatePercent, 
+}
+If (minESPercentToElementalResist=0)
+{
+   GuiControl, , minESPercentToElementalResistUpdate, N/A
+   GuiControl, , minESPercentToElementalResistUpdatePercent, 
+}
+If (minLifePercentToDrink=0)
+{
+   GuiControl, , minLifePercentToDrinkUpdate, N/A
+   GuiControl, , minLifePercentToDrinkUpdatePercent, 
+}
+If (minManaPercentToDrink=0)
+{
+   GuiControl, , minManaPercentToDrinkUpdate, N/A
+   GuiControl, , minManaPercentToDrinkUpdatePercent, 
+}
+If (minManaToDrinkPot=0)
+{
+   GuiControl, , minManaToDrinkPotUpdate, N/A
+}
+If (InstantFlaskDelay=0)
+{
+   GuiControl, , InstantFlaskDelayUpdate, N/A
+   GuiControl, , InstantFlaskDelayUpdatePercent, 
+}
+If (minLifePercentToSpam=0)
+{
+   GuiControl, , minLifePercentToSpamUpdate, N/A
+   GuiControl, , minLifePercentToSpamUpdatePercent, 
+}
+If (TradeSpam=0)
+{
+   GuiControl, , TradeSpamUpdate, N/A
+   GuiControl, , TradeSpamUpdatePercent, 
+}
+If (ResyncSpam=0)
+{
+   GuiControl, , ResyncSpamUpdate, N/A
+   GuiControl, , ResyncSpamUpdatePercent, 
+}
+If (RemainingSpam=0)
+{
+   GuiControl, , RemainingSpamUpdate, N/A
+   GuiControl, , RemainingSpamUpdatePercent, 
+}
+
+Gui, Submit
+
+StringTrimRight, Name, A_ScriptName, 4
+
+Gui, Show, x760 y198 h665 w474, %Name%
+
+Menu Tray, NoStandard
+
+Menu Tray, Standard
+
+Menu Tray,Check, Configuration Window
+
+;---------------------END DYNAMIC HOTKEYS---------------------
+
+;---------------------DEBUG WINDOW----------------------------
+
+Gui, 4:Add, GroupBox, x5 y0 w300 h300 , Player Stats
+ypos := 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Max HP
+Gui, 4:Add, Edit, Disabled vMaxHPvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Current HP
+Gui, 4:Add, Edit, Disabled vCurrHPvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Reserved HP Flat
+Gui, 4:Add, Edit, Disabled vReservedHPFlatvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Reserved HP Percent
+Gui, 4:Add, Edit, Disabled vReservedHPPercentvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Max Mana
+Gui, 4:Add, Edit, Disabled vMaxManavar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Current Mana
+Gui, 4:Add, Edit, Disabled vCurrManavar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Reserved Mana Flat
+Gui, 4:Add, Edit, Disabled vReservedManaFlatvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Reserved Mana Percent
+Gui, 4:Add, Edit, Disabled vReservedManaPercentvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Max Energy Shield
+Gui, 4:Add, Edit, Disabled vMaxEShieldvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Current Energy Shield
+Gui, 4:Add, Edit, Disabled vCurrEShieldvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Player Action ID
+Gui, 4:Add, Edit, Disabled vPlayerActionIDvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 35
+
+Gui, 4:Add, GroupBox, x5 y%ypos% w300 h340 , Checks
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Chat Status
+Gui, 4:Add, Edit, Disabled vChatStatusvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Mouse On Enemy
+Gui, 4:Add, Edit, Disabled vMouseOnEnemyStatusvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Panel Waypoint
+Gui, 4:Add, Edit, Disabled vPanelWaypointvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Panel Inventory
+Gui, 4:Add, Edit, Disabled vPanelInventoryvar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Panel Skill Tree
+Gui, 4:Add, Edit, Disabled vPanelSkillTreevar  x140 y%ypos% w150, Not In Game or Broken
+ypos += 25
+Gui, 4:Add, Text, x15 y%ypos% w155, Panel Social
